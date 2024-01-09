@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-avis 
+spec:
+  selector:
+    matchLabels:
+      app: ms-avis
+  template:
+    metadata:
+      labels:
+        app: ms-avis
+    spec:
+      containers:
+      - name: ms-avis
+        image: kkafroninja/ms-avis:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-avis-service
+spec:
+  selector:
+    app: ms-avis
+  ports:
+  - port: 8000 
+    targetPort: 8000

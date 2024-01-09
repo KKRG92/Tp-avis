@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-avis 
+spec:
+  selector:
+    matchLabels:
+      app: front-avis
+  template:
+    metadata:
+      labels:
+        app: front-avis
+    spec:
+      containers:
+      - name: front-avis
+        image: kkafroninja/front-avis:latest
+        #env:
+        #- name: MONGO_INITDB_ROOT_USERNAME
+        #  valueFrom:
+        #    secretKeyRef:
+        #      name: avis-secret
+        #      key: avis-root-username
+        #- name: MONGO_INITDB_ROOT_PASSWORD
+        #  valueFrom:
+        #    secretKeyRef:
+        #      name: avis-secret
+        #      key: avis-root-password
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+        volumeMounts:
+          - mountPath: /data/db
+            name: mongo-volume
+      volumes:
+        - name: mongo-volume
+          persistentVolumeClaim:
+            claimName: "mongo-pvc"
+          
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-avis-service
+spec:
+  selector:
+    app: front-avis
+  ports:
+  - port: 90 
+    targetPort: 80
